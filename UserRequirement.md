@@ -1,32 +1,62 @@
-User Requirement:
+# USER REQUIREMENTS
 
-1. the system can search for the rooms that meet specific requirements (time, how many people can the room contains ...)
-2. users can extend the meeting time when using the room.
-3. users can cancel the meeting.
-4. users can add another attendants based on room size.
-5. users will receive email when they have successfully booked the room, and also the other attendants.
-6. the system should show informations and current status of each room.
-7. users can schedule the meeting with a weekly or monthly interface.
-8. the system should exists 2 schedule, one for chosen room and one for users own schedule.
-9. user should be able to swap between rooms
-10. user should be able to access a map for the room.
-11. the system should specify the tag of the room.
-12. the system should be able to collect the number of attendants.
-13. the system should show the details of the room.
-14. users can schedule a repeatedly meeting.
-15. the system need to log in before room reservation.
-16. the system should provide a user-friendly registration process.
-17. the system should display real-time information on room availability.
-18. if a room is booked, the system should immediately reflect that information to avoid conflicts.
-19. the system should collect user reviews and ratings for rooms and the overall experience.
-20. the system should rank the rooms.
-21. FAQs or a help center to address common queries.
-22. the system should assure data security and privacy.
-23. the system should support a mobile-friendly interface for phones.
-24. the system should be integrated with mapping services for location information.
-25. the system should be integrated with calendar applications for easy tracking of reservations.
-26. the system should show room informations with picture for better understandings.
-27. users can access their booking history.
-28. the system should show common reservation notices.
-29. the system should show some related update, such as room cleaning, new room available.
-30. user can apply for room repairing.
+1. **Search and Filtering:**
+    - The system must feature an advanced search functionality allowing users to filter rooms based on specific criteria such as time availability, capacity, amenities, and any other user-defined preferences.
+2. **Meeting Time Extension:**
+    - Users should have the capability to extend the duration of their meetings beyond the initially scheduled time, ensuring flexibility for evolving meeting needs.
+3. **Meeting Cancellation:**
+    - Users should be able to easily cancel scheduled meetings, with options to provide cancellation reasons for better analytics.
+4. **Adding Attendees:**
+    - Users must be able to dynamically add additional attendees to a meeting, considering the room's capacity and any predefined limits.
+5. **Booking Confirmation:**
+    - Upon successful room reservation, users and all attendees should receive comprehensive email notifications confirming the reservation details, including date, time, and room information.
+6. **Room Information:**
+    - The system should display comprehensive real-time information about each room, including availability status, current occupants, and any ongoing activities.
+7. **Flexible Scheduling:**
+    - Users should be able to schedule meetings using a user-friendly interface that supports both weekly and monthly views, enhancing convenience in planning.
+8. **Dual Scheduling:**
+    - The system should allow users to manage two schedules simultaneously – one for the chosen room and another for their personal schedule.
+9. **Room Swapping:**
+    - Users should have the capability to seamlessly swap between different rooms, ensuring optimal utilization based on evolving needs.
+10. **Room Mapping:**
+    - Users should be able to access visual maps for each room, providing spatial context for better understanding and navigation within the facility.
+11. **Room Tagging:**
+    - The system should allow users to tag rooms with custom labels for easy identification, streamlining the booking process.
+12. **Attendance Tracking:**
+    - The system should automatically collect and display the number of attendees for each meeting, aiding in post-meeting analysis.
+13. **Room Details:**
+    - Users should have access to detailed information about each room, including facilities, equipment, and any specific rules or guidelines.
+14. **Recurring Meetings:**
+    - Users should be able to schedule recurring meetings at specified intervals, reducing the effort needed for repetitive reservations.
+15. **Secure Access:**
+    - A mandatory login process should be implemented to ensure the security of room reservations and user information.
+16. **User-Friendly Registration:**
+    - The system should offer a straightforward and user-friendly registration process, ensuring a seamless onboarding experience.
+17. **Real-Time Availability:**
+    - The system must display real-time information regarding room availability, updating instantly to reflect any changes.
+18. **Conflict Resolution:**
+    - The system should immediately reflect booked rooms to prevent scheduling conflicts, providing a seamless booking experience.
+19. **User Reviews and Ratings:**
+    - The system should feature a review and rating system for both rooms and the overall booking experience, encouraging user feedback.
+20. **Room Ranking:**
+    - Rooms should be ranked based on user feedback, cleanliness, amenities, and other relevant metrics, facilitating informed decision-making.
+21. **FAQs and Help Center:**
+    - A comprehensive FAQ section and a help center should be easily accessible to address common user queries and provide guidance.
+22. **Data Security and Privacy:**
+    - The system should adhere to stringent data security and privacy measures, including encryption protocols and secure storage practices.
+23. **Mobile-Friendly Interface:**
+    - The system should provide a responsive and intuitive mobile-friendly interface, allowing users to access and manage reservations conveniently via phones and tablets.
+24. **Integration with Mapping Services:**
+    - Seamless integration with mapping services should be implemented to provide accurate location information for each room, enhancing overall user experience.
+25. **Calendar Integration:**
+    - The system should integrate with popular calendar applications, allowing users to sync and track reservations effortlessly.
+26. **Visual Representation:**
+    - Each room should be accompanied by a visual representation (picture) to offer users a clear understanding of the room's layout and features.
+27. **Booking History Access:**
+    - Users should have easy access to a complete history of their past room reservations, promoting transparency and record-keeping.
+28. **Reservation Notices:**
+    - Users should receive timely notices related to reservations, including reminders, updates, and any changes to the reservation status.
+29. **Additional Information:**
+    - The system should provide additional information, such as room cleaning schedules and notifications about the availability of new rooms, ensuring users stay informed about relevant updates.
+30. **Room Repair Notifications:**
+    - Users should receive proactive notifications regarding any scheduled room repairs or maintenance, minimizing disruptions and ensuring a smooth booking experience.
