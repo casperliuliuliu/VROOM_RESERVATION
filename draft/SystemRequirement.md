@@ -1,4 +1,4 @@
-Certainly! Here are the system requirements categorized based on their functions related to rooms:
+[Purpose] This draft is trying to organize the functions into groups.
 
 ### **Room Booking and Management:**
 1. **Search and Filtering:**
