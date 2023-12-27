@@ -7,6 +7,6 @@ Current Task -> [People working on it.]
 -  SDD
 -  SAD
 -  MANUAL 
--  CODE -> [Steven]
+-  CODE -> [Steven, Casper]
 -  PPT
 -  VIDEO
