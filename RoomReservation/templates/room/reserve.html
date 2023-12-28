@@ -1,0 +1,81 @@
+{% extends 'template/base.html' %}
+{% load humanize %}
+{% block style %}
+<link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+{% endblock style %}
+{% block script %}
+<script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
+<script>
+    $('.datepicker').datepicker({
+        uiLibrary: 'bootstrap5'
+    });
+    $('.timepicker').timepicker({
+        uiLibrary: 'bootstrap5'
+    });
+</script>
+
+{% endblock script %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-4">
+                                <div class="row">
+                                    <div class="col-12 mb-2">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h1 class="card-title">{{ room.name }}</h1>
+                                                <h5>Room Details</h5>
+                                                <p class="card-text mb-0">Size: {{ room.size }}</p>
+                                                <p class="card-text mb-0">Capacity: {{ room.capacity }}</p>
+                                                <p class="card-text mb-0">Location: {{ room.location }}</p>
+                                                <p class="card-text">Price: Nt${{ room.price_per_hour|intcomma }}/hour</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-8">
+                                <h1>Reserve Room</h1>
+                                {{ form.non_field_errors }}
+                                <form method="POST" action={% url "room_reserve" id=room.id %}>
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="eventname" class="form-label">Event Name</label>
+                                        {{ form.event_name }}
+                                        <small class="text-danger">{{ form.event_name.errors }}</small>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-6 col-md-3">
+                                            <label for="{{ form.cc_myself.start_date }}" class="form-label">Date</label>
+                                            {{ form.start_date }}
+                                            <small class="text-danger">{{ form.start_date.errors }}</small>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label for="{{ form.cc_myself.start_time }}" class="form-label">Start Time</label>
+                                            {{ form.start_time }}
+                                            <small class="text-danger">{{ form.start_time.errors }}</small>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label for="{{ form.cc_myself.duration }}" class="form-label">Duration</label>
+                                            {{ form.duration }}
+                                            <small class="text-danger">{{ form.duration.errors }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <a href="{% url 'room_show' id=room.id %}" class="btn btn-secondary">Cancel</a>
+                                        <button class="btn btn-success" type="submit">Pay & Reserve</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,33 +1,57 @@
 {% extends 'template/base.html' %}
-{% load humanize %} 
-
+{% load humanize %}
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h1 class="card-title">{{ room.name }}</h1>
-                    {% if room.image %}
-                        <img src="{{ room.image.url }}" alt="Room Image">
-                    {% endif %}
-                    
-                    <h5>Room Details</h5>
-                    <p class="card-text mb-0">Size: {{ room.size }}</p>
-                    <p class="card-text mb-0">Capacity: {{ room.capacity }}</p>
-                    <p class="card-text mb-0">Location: {{ room.location }}</p>
-                    <p class="card-text">Price: Nt${{ room.price_per_hour|intcomma }}/hour</p>
-                    <h5>Description</h5>
-                    <p>{{ room.description }}</p>
-                    <h5>Facilities</h5>
-                    {% for facility in room.facilities.all %}
-                        <p class="card-text mb-0">{{ facility }}</p>
-                    {% endfor %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        
+                        {% if room.image %}<img src="{{ room.image.url }}" alt="Room Image">{% endif %}
+                        <h1 class="card-title">{{ room.name }}</h1>
+                        <div class="row">
+                            <div class="col-12 col-md-8 mb-2">
+
+                                <h5>Room Details</h5>
+                                <p class="card-text mb-0">Size: {{ room.size }}</p>
+                                <p class="card-text mb-0">Capacity: {{ room.capacity }}</p>
+                                <p class="card-text mb-0">Location: {{ room.location }}</p>
+                                <p class="card-text">Price: Nt${{ room.price_per_hour|intcomma }}/hour</p>
+                            </div>
+                            <div class="col-12 col-md-4 mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-grid">
+                                            <a href="{% url 'room_reserve' id=room.id %}" class="btn btn-primary">Reserve Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h5>Description</h5>
+                        <p>{{ room.description }}</p>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <h5>Facilities</h5>
+                                <ol class="list-group mb-2">
+                                    {% for facility in room.facilities.all %}
+                                    <li class="list-group-item d-flex align-items-start">
+                                        <i class="bi bi-{{ facility.icon }} my-2"></i>
+                                        <div class="ms-3 my-2">
+                                            <div class="fw-bold">{{ facility.name }}</div>
+                                        </div>
+                                    </li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <h5>Calendar</h5>
+                            </div>
+                        </div>
+                        
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
-
-                    
