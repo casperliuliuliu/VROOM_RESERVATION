@@ -1,0 +1,23 @@
+{% extends "template/base.html" %}
+{% load humanize %} 
+{% block content %}
+    {% comment %} <h1>{{ title }}</h1>
+    <p>{{ content }}</p> {% endcomment %}
+    <h1>Meeting Rooms</h1>
+    <div class="row">
+        {% for room in rooms %}
+            <div class="col-3">
+                <div class="card">
+                    <img src="..." class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ room.name }}</h5>
+                        <p class="card-text mb-0">Capacity: {{ room.capacity }}</p>
+                        <p class="card-text mb-0">Location: {{ room.location }}</p>
+                        <p class="card-text">Price: Nt$ {{ room.price_per_hour|intcomma }}/hour</p>
+                        <a href="{% url "room_show" id=room.id %}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

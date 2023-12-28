@@ -1,0 +1,33 @@
+{% extends 'template/base.html' %}
+{% load humanize %} 
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title">{{ room.name }}</h1>
+                    {% if room.image %}
+                        <img src="{{ room.image.url }}" alt="Room Image">
+                    {% endif %}
+                    
+                    <h5>Room Details</h5>
+                    <p class="card-text mb-0">Size: {{ room.size }}</p>
+                    <p class="card-text mb-0">Capacity: {{ room.capacity }}</p>
+                    <p class="card-text mb-0">Location: {{ room.location }}</p>
+                    <p class="card-text">Price: Nt${{ room.price_per_hour|intcomma }}/hour</p>
+                    <h5>Description</h5>
+                    <p>{{ room.description }}</p>
+                    <h5>Facilities</h5>
+                    {% for facility in room.facilities.all %}
+                        <p class="card-text mb-0">{{ facility }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+                    
