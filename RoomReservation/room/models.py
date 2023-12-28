@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
-class MeetingRoomEquipment(models.Model):
+class MeetingRoomFacilities(models.Model):
     name = models.CharField(max_length=50)
     icon = models.CharField(max_length=50, null=True, blank=True)
     
@@ -16,9 +16,9 @@ class Room(models.Model):
     capacity = models.IntegerField()
     size = models.FloatField()
     location = models.TextField()
-    pricePerHour = models.IntegerField()
+    price_per_hour = models.IntegerField()
     image = models.ImageField(upload_to='media/rooms/', null=True, blank=True)
-    equipments = models.ManyToManyField(MeetingRoomEquipment, related_name='rooms')
+    facilities = models.ManyToManyField(MeetingRoomFacilities, related_name='rooms')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rooms')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
