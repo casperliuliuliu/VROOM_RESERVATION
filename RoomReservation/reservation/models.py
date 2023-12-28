@@ -9,8 +9,9 @@ class Reservation(models.Model):
     event_name = models.CharField(max_length=225)
     room = models.ForeignKey('room.Room', on_delete=models.CASCADE, related_name='reservations')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_date = models.DateField()
+    start_time = models.TimeField()
+    duration = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     canceled_at = models.DateTimeField(null=True, blank=True)
     
