@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from .models import Room
 from .forms import ReservationForm 
 from reservation.models import Reservation
@@ -16,6 +17,7 @@ def show(request, id):
         'room': room
     })
     
+@login_required
 def reserve(request, id):
     if request.method == 'POST':
         return reserve_post(request, id)
@@ -26,6 +28,7 @@ def reserve(request, id):
         'form': ReservationForm()
     })
 
+
 def reserve_post(request, id):
     room = get_object_or_404(Room, id=id)
     form = ReservationForm(request.POST)
@@ -35,7 +38,6 @@ def reserve_post(request, id):
             'form': form
         })
     
-    reservation = Reservation(**form.cleaned_data, room=room, user=request.user)
-    reservation.save()
-    return redirect('room_show', id=room.id)
+    reservation = Reservation.objects.create(**form.cleaned_data, room=room, user=request.user)
+    return redirect('reservation_show', id=reservation.id)
         

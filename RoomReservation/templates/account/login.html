@@ -1,0 +1,38 @@
+{% extends 'template/base.html' %}
+{% load humanize %}
+{% block style %}
+
+{% endblock style %}
+{% block script %}
+    
+{% endblock script %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h1>Login</h1>
+                        {{ form.non_field_errors }}
+                        <form method="post" action="{% url 'account_login' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                                {{ form.username }}
+                                <small class="text-danger">{{ form.username.errors }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                                {{ form.password }}
+                                <small class="text-danger">{{ form.password.errors }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <button class="btn btn-success" type="submit">Login</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

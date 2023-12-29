@@ -42,10 +42,10 @@
                             <div class="col-12 col-md-8">
                                 <h1>Reserve Room</h1>
                                 {{ form.non_field_errors }}
-                                <form method="POST" action={% url "room_reserve" id=room.id %}>
+                                <form method="POST" action="{% url "room_reserve" id=room.id %}">
                                     {% csrf_token %}
                                     <div class="mb-3">
-                                        <label for="eventname" class="form-label">Event Name</label>
+                                        <label for="{{ form.cc_myself.event_name }}" class="form-label">Event Name</label>
                                         {{ form.event_name }}
                                         <small class="text-danger">{{ form.event_name.errors }}</small>
                                     </div>
