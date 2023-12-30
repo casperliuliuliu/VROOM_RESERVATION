@@ -68,8 +68,8 @@ def reserve_post(request, id):
     reservation = Reservation.objects.create(**form.cleaned_data, room=room, user=request.user)
     
     messages.success(request, 'Reservation created successfully', extra_tags='success')
-    
-    redirect_link = f'http://{settings.DEFAULT_HOST}/reservation/{reservation.id}'
+
+    redirect_link = f'{settings.DEFAULT_HOST}/reservation/{reservation.id}'
     subject = f'[{reservation.event_name}]Meeting Room Reservation Confirmation'
     html_message = render_to_string('emails/reservation.html', {'reservation': reservation, 'redirect_link': redirect_link})
     plain_message = strip_tags(html_message)
@@ -77,7 +77,6 @@ def reserve_post(request, id):
     to = reservation.user.email 
 
     mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
-
 
     return redirect('reservation_show', id=reservation.id)
         
