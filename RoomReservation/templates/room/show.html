@@ -1,5 +1,29 @@
 {% extends 'template/base.html' %}
 {% load humanize %}
+{% block script %}
+    <script src=" https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.10/index.global.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('room-calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            themeSystem: 'bootstrap5',
+            timeZone: 'Asia/Taipei',
+            headerToolbar: {
+                left: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay',
+            },
+            footerToolbar: {
+                center: 'prev,today,next',
+            },
+            dayMaxEvents: true, // allow "more" link when too many events
+          });
+        
+          calendar.render();
+    });
+
+    </script>
+{% endblock script %}
 {% block content %}
     <div class="container">
         <div class="row">
@@ -31,7 +55,7 @@
                         <h5>Description</h5>
                         <p>{{ room.description }}</p>
                         <div class="row">
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-7">
                                 <h5>Facilities</h5>
                                 <ol class="list-group mb-2">
                                     {% for facility in room.facilities.all %}
@@ -44,8 +68,13 @@
                                     {% endfor %}
                                 </ol>
                             </div>
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-5">
                                 <h5>Calendar</h5>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div id="room-calendar"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
