@@ -1,9 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.conf import settings
 from .models import Room
 from .forms import ReservationForm 
 from reservation.models import Reservation
+from django.core import mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # Create your views here.
 def index(request):
@@ -62,5 +66,18 @@ def reserve_post(request, id):
             'form': form
         })
     reservation = Reservation.objects.create(**form.cleaned_data, room=room, user=request.user)
+    
+    messages.success(request, 'Reservation created successfully', extra_tags='success')
+    
+    redirect_link = f'http://{settings.DEFAULT_HOST}/reservation/{reservation.id}'
+    subject = f'[{reservation.event_name}]Meeting Room Reservation Confirmation'
+    html_message = render_to_string('emails/reservation.html', {'reservation': reservation, 'redirect_link': redirect_link})
+    plain_message = strip_tags(html_message)
+    from_email = 'Best Reservation Website <sandboxatrest@gmail.com>'
+    to = reservation.user.email 
+
+    mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+
+
     return redirect('reservation_show', id=reservation.id)
         
