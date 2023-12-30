@@ -21,6 +21,6 @@ urlpatterns = [
     path("", views.index, name="reservation_index"),
     path("<str:id>", views.show, name="reservation_show"),
     path("<str:reservation_id>/attendee", views.add_attendee, name="reservation_attendee_add"), 
-    path("<str:reservation_id>/attendee<str:attendee_id>", views.attendee_show, name="reservation_attendee_show"), 
+    path("<str:reservation_id>/attendee/<str:attendee_id>", views.attendee_show, name="reservation_attendee_show"), 
     
 ]
