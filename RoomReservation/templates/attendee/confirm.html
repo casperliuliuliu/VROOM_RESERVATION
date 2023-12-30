@@ -1,0 +1,137 @@
+{% extends 'template/base.html' %}
+{% load humanize %}
+{% block style %}
+{% endblock style %}
+{% block script %}
+{% endblock script %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-4">
+                                <div class="row">
+                                    <div class="col-12 mb-2">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="mb-0">Event</h5>
+                                                <h1 class="card-title mb-0">{{ reservation.event_name }}</h1>
+                                                <table>
+                                                    <tr>
+                                                        <td class="pe-3">Start Date:</td>
+                                                        <td>{{ reservation.start_date |date:"F j, Y" }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pe-3">Start Time:</td>
+                                                        <td>{{ reservation.start_time | time:'H:i A' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pe-3">End Time:</td>
+                                                        <td>{{ reservation.end_time | time:'H:i A' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pe-3">Venue:</td>
+                                                        <td>{{ reservation.room.name }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pe-3">Location:</td>
+                                                        <td>{{ reservation.room.location }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pe-3">Duration:</td>
+                                                        <td>{{ reservation.duration }} Hour</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-8">
+                                <h1>Confirm Invitation</h1>
+                                {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
+                                <div class="mb-3 row">
+                                    <div class="col-3 d-grid">
+                                        <button type="button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#accept-invitation-modal"
+                                        class="btn btn-success">Accept</button>
+                                    </div>
+                                    <div class="col-3 d-grid">
+                                        <button type="button"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#decline-invitation-modal"
+                                                class="btn btn-danger">Decline</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Accept Invitation Modal -->
+    <div class="modal fade"
+         id="accept-invitation-modal"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Accept Invitation to {{ reservation.event_name }}</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    By clicking the button below, you will accept your invitation.
+                    <br>
+                    <b>You can request the event coordinator to send you another invitation if you decide to change your mind.</b>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <form method="post">
+                        <input type="hidden" name="action" value="accept_invitation">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Accept Invitation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Decline Invitation Modal -->
+    <div class="modal fade"
+         id="decline-invitation-modal"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Decline Invitation to {{ reservation.event_name }}</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    By clicking the button below, you will decline your invitation.
+                    <br>
+                    <b>You can request the event coordinator to send you another invitation if you decide to change your mind.</b>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <form method="post">
+                        <input type="hidden" name="action" value="decline_invitation">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Decline Invitation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
