@@ -1,0 +1,51 @@
+{% extends "template/base.html" %}
+{% load humanize %}
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h1 class="mb-3">My Reservations</h1>
+            <div class="row">
+                {% for reservation in reservations %}
+                    <div class="col-12 mb-2">
+                        <a href="{% url 'reservation_show' id=reservation.id %}"
+                           class="text-decoration-none text-black">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">{{ reservation.event_name }}</h4>
+                                    <table>
+                                        <tr>
+                                            <td class="pe-5">Date:</td>
+                                            <td>{{ reservation.start_date|date:"F d, Y" }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Time:</td>
+                                            <td>{{ reservation.start_time|time:"h:i A" }} - {{ reservation.end_time|time:"h:i A" }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Venue:</td>
+                                            <td>
+                                                <a href="{% url 'room_show' id=reservation.room.id %}">{{ reservation.room }}</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Status:</td>
+                                            <td>
+                                                {% if reservation.status == self.ReservationStatus.ONGOING %}
+                                                    <span class="badge bg-success">{{ reservation.status }}</span>
+                                                {% elif reservation.status == self.ReservationStatus.ONGOING %}
+                                                    <span class="badge bg-danger">{{ reservation.status }}</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ reservation.status }}</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
