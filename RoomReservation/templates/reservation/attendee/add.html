@@ -34,19 +34,19 @@
                                                 <table>
                                                     <tr>
                                                         <td class="pe-3">Start Date:</td>
-                                                        <td>{{ reservation.start_date }}</td>
+                                                        <td>{{ reservation.start_date |date:"F j, Y" }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="pe-3">Start Time:</td>
-                                                        <td>{{ reservation.start_time }}</td>
+                                                        <td>{{ reservation.start_time | time:'H:i A' }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="pe-3">End Time:</td>
-                                                        <td>{{ reservation.end_time }}</td>
+                                                        <td>{{ reservation.end_time | time:'H:i A' }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="pe-3">Duration:</td>
-                                                        <td>{{ reservation.duration }} Hour</td>
+                                                        <td>{{ reservation.duration  }} Hour</td>
                                                     </tr>
                                                 </table>
                                             </div>
