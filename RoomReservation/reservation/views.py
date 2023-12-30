@@ -136,12 +136,21 @@ def attendance(request, id):
         'attendee': attendee,
         'reservation': reservation
     })
-    return render(request, 'attendee/show.html', {
-        'attendee': attendee,
-        'reservation': reservation
-    })
+    if attendee.response_status == attendee.ResponseStatus.ACCEPTED:
+        return render(request, 'attendee/show.html', {
+            'attendee': attendee,
+            'reservation': reservation
+        })
+    if attendee.response_status == attendee.ResponseStatus.DECLINED:
+        return render(request, 'attendee/declined.html', {
+            'attendee': attendee,
+            'reservation': reservation
+        })
 
 def attendance_post(request, attendee, reservation):
+    if attendee.response_status != attendee.ResponseStatus.WAITING:
+        return HttpResponse('Invalid action', status=400)
+    
     if request.POST["action"] == 'accept_invitation':
         attendee.response_status = attendee.ResponseStatus.ACCEPTED
         attendee.save()

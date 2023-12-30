@@ -3,6 +3,28 @@
 {% block style %}
 {% endblock style %}
 {% block script %}
+    <script src=" https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.10/index.global.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('event-calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+                themeSystem: 'bootstrap5',
+                timeZone: 'Asia/Taipei',
+                headerToolbar: {
+                    left: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay',
+                },
+                footerToolbar: {
+                    center: 'prev,today,next',
+                },
+                dayMaxEvents: true, // allow "more" link when too many events
+          });
+        
+          calendar.render();
+    });
+
+    </script>
 {% endblock script %}
 {% block content %}
     <div class="container">
@@ -16,56 +38,45 @@
                                     <div class="col-12 mb-2">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h5 class="mb-0">Event</h5>
-                                                <h1 class="card-title mb-0">{{ reservation.event_name }}</h1>
-                                                <table>
-                                                    <tr>
-                                                        <td class="pe-3">Start Date:</td>
-                                                        <td>{{ reservation.start_date |date:"F j, Y" }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pe-3">Start Time:</td>
-                                                        <td>{{ reservation.start_time | time:'H:i A' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pe-3">End Time:</td>
-                                                        <td>{{ reservation.end_time | time:'H:i A' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pe-3">Venue:</td>
-                                                        <td>{{ reservation.room.name }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pe-3">Location:</td>
-                                                        <td>{{ reservation.room.location }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pe-3">Duration:</td>
-                                                        <td>{{ reservation.duration }} Hour</td>
-                                                    </tr>
-                                                </table>
+                                                <div id="event-calendar"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12 col-md-8">
-                                <h1>Confirm Invitation</h1>
-                                {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
-                                <div class="mb-3 row">
-                                    <div class="col-3 d-grid">
-                                        <button type="button"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#accept-invitation-modal"
-                                        class="btn btn-success">Accept</button>
-                                    </div>
-                                    <div class="col-3 d-grid">
-                                        <button type="button"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#decline-invitation-modal"
-                                                class="btn btn-danger">Decline</button>
-                                    </div>
-                                </div>
+                                <h5 class="mb-0">Event</h5>
+                                <h1 class="card-title mb-0">{{ reservation.event_name }}</h1>
+                                <table class="table">
+                                    <tr>
+                                        <td class="col-3">Start Date:</td>
+                                        <td>{{ reservation.start_date |date:"F j, Y" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="">Event Coordinator:</td>
+                                        <td>{{ reservation.user.username }} ({{ reservation.user.email }})</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="">Start Time:</td>
+                                        <td>{{ reservation.start_time | time:'H:i A' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="">End Time:</td>
+                                        <td>{{ reservation.end_time | time:'H:i A' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="">Venue:</td>
+                                        <td>{{ reservation.room.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="">Location:</td>
+                                        <td>{{ reservation.room.location }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="">Duration:</td>
+                                        <td>{{ reservation.duration }} Hour</td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -103,7 +114,6 @@
             </div>
         </div>
     </div>
-    
     <!-- Decline Invitation Modal -->
     <div class="modal fade"
          id="decline-invitation-modal"
