@@ -4,9 +4,9 @@ Stuff need to be finished this friday 23:59
 
 Current Task -> [People working on it.]
 -  SRS -> [Casper]
--  SDD
--  SAD
--  MANUAL 
+-  SDD -> [Casper]
+-  SAD -> [Casper]
+-  MANUAL -> [Casper]
 -  CODE -> [Steven, Casper]
 -  PPT 
 -  VIDEO 
