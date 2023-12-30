@@ -35,17 +35,17 @@
                         <div class="row">
                             <div class="col-12 col-md-7">
                                 <h1>{{ reservation.event_name }}</h1>
-                                <p>{{ reservation.start_date | date }}</p>
+                                <p>{{ reservation.start_date | date:"F j, Y" }}</p>
                                 {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
                                 <h4>Reservation Details</h4>
                                 <table class="mb-3 table">
                                     <tr>
                                         <td class="col-3">Start Time:</td>
-                                        <td class="col">{{ reservation.start_time | time:'g:i A' }}</td>
+                                        <td class="col">{{ reservation.start_time | time:'H:i A' }}</td>
                                     </tr>
                                     <tr>
                                         <td >End Time:</td>
-                                        <td>{{ reservation.end_time | time:'g:i A' }}</td>
+                                        <td>{{ reservation.end_time | time:'H:i A' }}</td>
                                     </tr>
                                     <tr>
                                         <td >Duration:</td>
@@ -53,7 +53,10 @@
                                     </tr>
                                     <tr>
                                         <td >Actions:</td>
-                                        <td>{{ reservation.duration }} hours</td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm">Extend Reservation</button>
+                                            <button class="btn btn-danger btn-sm">Cancel Reservation</button>
+                                        </td>
                                     </tr>
                                 </table>
                                 <h4>Attendees</h4>

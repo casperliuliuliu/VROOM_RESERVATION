@@ -34,15 +34,15 @@
                                                 <table>
                                                     <tr>
                                                         <td class="pe-3">Start Date:</td>
-                                                        <td>{{ reservation.start_date }}</td>
+                                                        <td>{{ reservation.start_date |date:"F j, Y" }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="pe-3">Start Time:</td>
-                                                        <td>{{ reservation.start_time }}</td>
+                                                        <td>{{ reservation.start_time | time:'H:i A' }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="pe-3">End Time:</td>
-                                                        <td>{{ reservation.end_time }}</td>
+                                                        <td>{{ reservation.end_time | time:'H:i A' }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="pe-3">Duration:</td>
@@ -56,60 +56,114 @@
                             </div>
                             <div class="col-12 col-md-8">
                                 <h1>Attendee Details</h1>
-                                {% for message in messages %}
-                                    <div class="alert alert-{{ message.tags }}">
-                                        {{ message }}
-                                    </div>
-                                {% endfor %}
+                                {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
                                 <table class="table">
                                     <tr>
-                                        <td class="col-4">
-                                            Name:
-                                        </td>
-                                        <td class="col-8">
-                                            {{ attendee.name }}
-                                        </td>
+                                        <td class="col-4">Name:</td>
+                                        <td class="col-8">{{ attendee.name }}</td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            Email:
-                                        </td>
-                                        <td>
-                                            {{ attendee.email }}
-                                        </td>
+                                        <td>Email:</td>
+                                        <td>{{ attendee.email }}</td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            Response Status:
-                                        </td>
-                                        <td>
-                                            {{ attendee.response_status }}
-                                        </td>
+                                        <td>Response Status:</td>
+                                        <td>{{ attendee.response_status }}</td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            Added at:
-                                        </td>
-                                        <td>
-                                            {{ attendee.created_at }}
-                                        </td>
+                                        <td>Added at:</td>
+                                        <td>{{ attendee.created_at }}</td>
                                     </tr>
                                     <tr>
+                                        <td>Actions:</td>
                                         <td>
-                                            Actions:
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-info btn-sm">Edit Details</button>
-                                            <button class="btn btn-warning btn-sm">Re-send Invitation</button>
-                                            <button class="btn btn-danger btn-sm">Cancel Invitation</button>
+                                            <button type="button"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#resend-invitation-modal"
+                                                    class="btn btn-warning btn-sm">Resend Invitation</button>
+                                            <button type="button"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#cancel-invitation-modal"
+                                                    class="btn btn-danger btn-sm">Cancel Invitation</button>
                                         </td>
                                     </tr>
                                 </table>
-                                <a href="{% url 'reservation_show' id=reservation.id %}" class="btn btn-secondary">Back</a>
+                                <a href="{% url 'reservation_show' id=reservation.id %}"
+                                   class="btn btn-secondary">Back</a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Resend Invitation Modal -->
+    <div class="modal fade"
+         id="resend-invitation-modal"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Resend Invitation</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    By clicking the button below, you will resend the invitation to the attendee.
+                    <br>
+                    <b>This action will also reset the response status of the attendee!</b>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="resend_invitation">
+                        <button type="submit" class="btn btn-warning">Resend Invitation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Cancel Invitation Modal -->
+    <div class="modal fade"
+         id="cancel-invitation-modal"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Cancel Invitation to {{ attendee.name }}</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        By clicking the button below, you will cancel the invitation of the attendee.
+                        <br>
+                        <b>This action cannot be undone!</b>
+                        <div class="form-check">
+                            {% csrf_token %}
+                            <input type="hidden" name="send_canceled_email" value="false">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="send_canceled_email"
+                                   value="true"
+                                   id="meeting_canceled"
+                                   checked>
+                            <label class="form-check-label" for="meeting_canceled">Send meeting canceled email to the attendee</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <input type="hidden" name="action" value="cancel_invitation">
+                        <button type="submit" class="btn btn-danger">Cancel Invitation</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
