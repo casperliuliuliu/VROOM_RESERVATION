@@ -1,0 +1,116 @@
+{% extends 'template/base.html' %}
+{% load humanize %}
+{% block style %}
+    <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css"
+          rel="stylesheet"
+          type="text/css" />
+{% endblock style %}
+{% block script %}
+    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js"
+            type="text/javascript"></script>
+    <script>
+    $('.datepicker').datepicker({
+        uiLibrary: 'bootstrap5'
+    });
+    $('.timepicker').timepicker({
+        uiLibrary: 'bootstrap5'
+    });
+    </script>
+{% endblock script %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-4">
+                                <div class="row">
+                                    <div class="col-12 mb-2">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="mb-0">Event</h5>
+                                                <h1 class="card-title mb-0">{{ reservation.event_name }}</h1>
+                                                <table>
+                                                    <tr>
+                                                        <td class="pe-3">Start Date:</td>
+                                                        <td>{{ reservation.start_date }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pe-3">Start Time:</td>
+                                                        <td>{{ reservation.start_time }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pe-3">End Time:</td>
+                                                        <td>{{ reservation.end_time }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pe-3">Duration:</td>
+                                                        <td>{{ reservation.duration }} Hour</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-8">
+                                <h1>Attendee Details</h1>
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                                <table class="table">
+                                    <tr>
+                                        <td class="col-4">
+                                            Name:
+                                        </td>
+                                        <td class="col-8">
+                                            {{ attendee.name }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Email:
+                                        </td>
+                                        <td>
+                                            {{ attendee.email }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Response Status:
+                                        </td>
+                                        <td>
+                                            {{ attendee.response_status }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Added at:
+                                        </td>
+                                        <td>
+                                            {{ attendee.created_at }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Actions:
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm">Edit Details</button>
+                                            <button class="btn btn-warning btn-sm">Re-send Invitation</button>
+                                            <button class="btn btn-danger btn-sm">Cancel Invitation</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <a href="{% url 'reservation_show' id=reservation.id %}" class="btn btn-secondary">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
