@@ -52,6 +52,13 @@
                                         <td>{{ reservation.duration }} hours</td>
                                     </tr>
                                     <tr>
+                                        <td >Add to calendar:</td>
+                                        <td>
+                                            <a href="{% url 'reservation_feed' id=reservation.id %}" class="btn btn-primary btn-sm"><i class="bi bi-calendar me-1"></i>Ical File</a>
+                                            <a href="{% url 'reservation_feed' id=reservation.id %}" class="btn btn-success btn-sm"><i class="bi bi-google me-1"></i> Google Calendar</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td >Actions:</td>
                                         <td>
                                             <button class="btn btn-info btn-sm">Extend Reservation</button>
