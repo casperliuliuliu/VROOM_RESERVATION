@@ -48,8 +48,6 @@ def show_calendar(request, room):
     
     start_date = parse_datetime(start).date()
     end_date = parse_datetime(end).date()
-
-    print(start_date, end_date)
     
     reservations = Reservation.objects.filter(room=room, start_date__gte=start_date, start_date__lte=end_date).all()
 
@@ -87,7 +85,6 @@ def reserve_post(request, id):
     reservation = form.save(commit=False)
 
     endtime = reservation.end_time()
-    # other_reservation_check = Reservation.objects.filter(room=room, start_date__gte=endtime, start_time__gte=endtime, start_time__lte=endtime).first()
     other_reservation = Reservation.objects.raw("""
         SELECT *, TIME(TIME(start_time, duration || ' hours'), '-1 seconds')
         FROM reservation_reservation
