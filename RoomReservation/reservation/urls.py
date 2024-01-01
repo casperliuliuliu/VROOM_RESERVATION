@@ -24,4 +24,5 @@ urlpatterns = [
     path("<str:reservation_id>/attendee", views.add_attendee, name="reservation_attendee_add"), 
     path("<str:reservation_id>/attendee/<str:attendee_id>", views.attendee_show, name="reservation_attendee_show"), 
     path("<str:id>/ical", EventFeed(), name="reservation_feed"),
+    path("<str:id>/gcal", views.google_calendar_auth, name="reservation_google_calendar"),
 ]

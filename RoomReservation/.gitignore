@@ -39,3 +39,7 @@ db.sqlite3
 # Ignore Docker files
 Dockerfile
 docker-compose.yml
+
+# Ignore Google API files
+client_secret.json
+

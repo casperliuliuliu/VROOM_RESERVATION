@@ -24,4 +24,5 @@ urlpatterns = [
     path('reservation/', include("reservation.urls")),
     path('attendee/<str:id>', reservation_views.attendance, name="attendance"),
     path('accounts/', include("account.urls")),
+    path('calendar/redirect', reservation_views.google_calendar_callback, name="google_calendar_callback"),
 ]

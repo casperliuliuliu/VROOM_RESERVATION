@@ -55,7 +55,7 @@
                                         <td >Add to calendar:</td>
                                         <td>
                                             <a href="{% url 'reservation_feed' id=reservation.id %}" class="btn btn-primary btn-sm"><i class="bi bi-calendar me-1"></i>Ical File</a>
-                                            <a href="{% url 'reservation_feed' id=reservation.id %}" class="btn btn-success btn-sm"><i class="bi bi-google me-1"></i> Google Calendar</a>
+                                            <a href="{% url 'reservation_google_calendar' id=reservation.id %}" class="btn btn-success btn-sm"><i class="bi bi-google me-1"></i> Google Calendar</a>
                                         </td>
                                     </tr>
                                     <tr>

@@ -7,8 +7,111 @@ from django.core import mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
+from django.conf import settings
+from datetime import datetime
+
 from reservation.forms import AttendeeForm
 from .models import Reservation, Attendee
+import os
+
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
+from django.shortcuts import redirect
+
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+
+
+CLIENT_SECRETS_FILE = "credentials.json"
+
+# This OAuth 2.0 access scope allows for full read/write access to the
+# authenticated user's account and requires requests to use an SSL connection and REDIRECT URL.
+SCOPES = ['https://www.googleapis.com/auth/calendar']
+
+REDIRECT_URL = settings.DEFAULT_HOST + '/calendar/redirect'
+API_SERVICE_NAME = 'calendar'
+API_VERSION = 'v3'
+
+@login_required
+def google_calendar_auth(request, id):
+    flow = Flow.from_client_secrets_file(
+        'client_secret.json',
+        scopes=['https://www.googleapis.com/auth/calendar'],
+        redirect_uri=REDIRECT_URL)
+
+    authorization_url, state = flow.authorization_url()
+    request.session['reservation_id'] = id
+    request.session['state'] = state
+
+    return redirect(authorization_url)
+
+@login_required
+def google_calendar_callback(request):
+    # Retrieve data from the session
+    reservation_id = request.session.get('reservation_id')
+    del request.session['reservation_id']
+    if(reservation_id == None):
+        return HttpResponse('Invalid request', status=400)
+    
+    reservation = Reservation.objects.filter(id=reservation_id).first()
+    if(reservation == None):
+        return HttpResponse('Invalid request', status=400)
+    
+    state = request.session['state']
+    if state is None:
+        return HttpResponse("State parameter missing.", status=400)
+
+    flow = Flow.from_client_secrets_file(
+        'client_secret.json', scopes=SCOPES, state=state)
+    flow.redirect_uri = REDIRECT_URL
+
+    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+    authorization_response = request.get_full_path()
+    flow.fetch_token(authorization_response=authorization_response)
+
+    credentials = flow.credentials
+    request.session['credentials'] = credentials_to_dict(credentials)
+
+    if 'credentials' not in request.session:
+        return redirect('v1/calendar/init')
+
+    credentials = Credentials(
+        **request.session['credentials'])
+
+    # Use the Google API Discovery Service to build client libraries, IDE plugins,
+    # and other tools that interact with Google APIs.
+    # The Discovery API provides a list of Google APIs and a machine-readable "Discovery Document" for each API
+    service = build(
+        API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+    # Define your event
+    event = {
+        'summary': reservation.event_name,
+        'start': {
+            'dateTime': datetime.combine(reservation.start_date, reservation.start_time).isoformat(),
+            'timeZone': settings.TIME_ZONE,
+        },
+        'end': {
+            'dateTime': datetime.combine(reservation.start_date, reservation.end_time()).isoformat(),
+            'timeZone': settings.TIME_ZONE,
+        },
+    }
+
+    # Add the event
+    event = service.events().insert(calendarId='primary', body=event).execute()
+    print('Event created: %s' % (event.get('htmlLink')))
+
+    messages.success(request, 'Event added successfully to your Google Calendar', extra_tags='success')
+    return redirect('reservation_show', reservation_id)
+
+def credentials_to_dict(credentials):
+    return {'token': credentials.token,
+            'refresh_token': credentials.refresh_token,
+            'token_uri': credentials.token_uri,
+            'client_id': credentials.client_id,
+            'client_secret': credentials.client_secret,
+            'scopes': credentials.scopes}
 
 # Create your views here.
 @login_required
