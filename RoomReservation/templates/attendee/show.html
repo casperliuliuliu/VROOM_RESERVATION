@@ -18,6 +18,19 @@
                 footerToolbar: {
                     center: 'prev,today,next',
                 },
+                initialView: 'dayGridMonth',
+                eventSources: [
+                    {
+                        url: '{% url 'attendance' id=attendee.id %}',
+                        method: 'GET',
+                        extraParams: {
+                            type: 'calendar',
+                        },
+                        failure: function() {
+                            alert('there was an error while fetching events!');
+                        },
+                    }
+                ],
                 dayMaxEvents: true, // allow "more" link when too many events
           });
         
@@ -47,6 +60,11 @@
                             <div class="col-12 col-md-8">
                                 <h5 class="mb-0">Event</h5>
                                 <h1 class="card-title mb-0">{{ reservation.event_name }}</h1>
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
                                 <table class="table">
                                     <tr>
                                         <td class="col-3">Start Date:</td>
@@ -76,6 +94,13 @@
                                         <td class="">Duration:</td>
                                         <td>{{ reservation.duration }} Hour</td>
                                     </tr>
+                                    <tr>
+                                        <td >Add to calendar:</td>
+                                        <td>
+                                            <a href="{% url 'reservation_feed' id=attendee.id %}" class="btn btn-primary btn-sm"><i class="bi bi-calendar me-1"></i>Ical File</a>
+                                            <a href="{% url 'google_calendar_link' id=attendee.id model='attendee' %}" class="btn btn-success btn-sm"><i class="bi bi-google me-1"></i> Google Calendar</a>
+                                        </td>
+                                    </tr>
                                 </table>
                             </div>
                         </div>
@@ -84,64 +109,5 @@
             </div>
         </div>
     </div>
-    <!-- Accept Invitation Modal -->
-    <div class="modal fade"
-         id="accept-invitation-modal"
-         tabindex="-1"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Accept Invitation to {{ reservation.event_name }}</h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    By clicking the button below, you will accept your invitation.
-                    <br>
-                    <b>You can request the event coordinator to send you another invitation if you decide to change your mind.</b>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <form method="post">
-                        <input type="hidden" name="action" value="accept_invitation">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success">Accept Invitation</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Decline Invitation Modal -->
-    <div class="modal fade"
-         id="decline-invitation-modal"
-         tabindex="-1"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Decline Invitation to {{ reservation.event_name }}</h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    By clicking the button below, you will decline your invitation.
-                    <br>
-                    <b>You can request the event coordinator to send you another invitation if you decide to change your mind.</b>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <form method="post">
-                        <input type="hidden" name="action" value="decline_invitation">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Decline Invitation</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 {% endblock content %}

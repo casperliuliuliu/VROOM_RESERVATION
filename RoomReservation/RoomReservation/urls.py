@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from reservation import views as reservation_views
+from reservation import views as reservation_views, feeds as reservation_feeds
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +24,8 @@ urlpatterns = [
     path('reservation/', include("reservation.urls")),
     path('attendee/<str:id>', reservation_views.attendance, name="attendance"),
     path('accounts/', include("account.urls")),
+    path("attendee/<str:id>/ical", reservation_feeds.AttendeeFeed(), name="attendee_feed"),
+    path("<str:model>/<str:id>/gcal", reservation_views.google_calendar_auth, name="google_calendar_link"),
     path('calendar/redirect', reservation_views.google_calendar_callback, name="google_calendar_callback"),
+
 ]

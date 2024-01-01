@@ -17,6 +17,8 @@ import os
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
+from django.http import JsonResponse
+from django.utils.dateparse import parse_datetime
 from django.shortcuts import redirect
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -33,31 +35,44 @@ REDIRECT_URL = settings.DEFAULT_HOST + '/calendar/redirect'
 API_SERVICE_NAME = 'calendar'
 API_VERSION = 'v3'
 
-@login_required
-def google_calendar_auth(request, id):
+# @login_required
+def google_calendar_auth(request, id, model):
+    if model not in ('reservation', 'attendee'):
+        return HttpResponse('Invalid request', status=400)
+    
     flow = Flow.from_client_secrets_file(
         'client_secret.json',
         scopes=['https://www.googleapis.com/auth/calendar'],
         redirect_uri=REDIRECT_URL)
 
     authorization_url, state = flow.authorization_url()
-    request.session['reservation_id'] = id
+
+    request.session['model'] = model
+    request.session['model_id'] = id
     request.session['state'] = state
 
     return redirect(authorization_url)
 
-@login_required
 def google_calendar_callback(request):
     # Retrieve data from the session
-    reservation_id = request.session.get('reservation_id')
-    del request.session['reservation_id']
-    if(reservation_id == None):
+    model = request.session.get('model')
+    model_id = request.session.get('model_id')
+    del request.session['model']
+    del request.session['model_id']
+    if(model_id == None):
         return HttpResponse('Invalid request', status=400)
     
-    reservation = Reservation.objects.filter(id=reservation_id).first()
-    if(reservation == None):
-        return HttpResponse('Invalid request', status=400)
+    if model == 'reservation':
+        reservation = Reservation.objects.filter(id=model_id).first()
+        if(reservation == None):
+            return HttpResponse('Invalid request', status=400)
     
+    if model == 'attendee':
+        attendee = Attendee.objects.filter(id=model_id).first()
+        if(attendee == None):
+            return HttpResponse('Invalid request', status=400)
+        reservation = attendee.reservation
+
     state = request.session['state']
     if state is None:
         return HttpResponse("State parameter missing.", status=400)
@@ -103,7 +118,13 @@ def google_calendar_callback(request):
     print('Event created: %s' % (event.get('htmlLink')))
 
     messages.success(request, 'Event added successfully to your Google Calendar', extra_tags='success')
-    return redirect('reservation_show', reservation_id)
+    
+    if model == 'reservation':
+        return redirect('reservation_show', reservation.id)
+    if model == 'attendee':
+        return redirect('attendance', attendee.id)
+    
+    return HttpResponse('Invalid request', status=400)
 
 def credentials_to_dict(credentials):
     return {'token': credentials.token,
@@ -124,6 +145,15 @@ def index(request):
 @login_required
 def show(request, id):
     reservation = get_object_or_404(Reservation, id=id)
+    
+    try:
+        type = request.GET["type"]
+    except:
+        type = None
+
+    if type == 'calendar':
+        return show_calendar(request, reservation)
+
     if(reservation.user != request.user):
         return HttpResponse('Unauthorized Access to this reservation', status=401)
     attendees = Attendee.objects.filter(reservation=reservation).all()
@@ -131,6 +161,15 @@ def show(request, id):
         'reservation': reservation,
         'attendees': attendees
     })
+
+def show_calendar(request, reservation):
+  
+    event_data = [{
+        'title': reservation.event_name,
+        'start': datetime.combine(reservation.start_date, reservation.start_time).isoformat(),
+        'end': datetime.combine(reservation.start_date, reservation.end_time()).isoformat(),
+    }]
+    return JsonResponse(event_data, safe=False)
     
 @login_required
 def add_attendee(request, reservation_id):
@@ -196,6 +235,8 @@ def attendee_show(request, reservation_id, attendee_id):
         'attendee': attendee
     })
 
+
+
 @login_required
 def attendee_show_post(request, reservation, attendee):
     if request.POST["action"] == 'resend_invitation':
@@ -234,6 +275,15 @@ def attendance(request, id):
     reservation = attendee.reservation
     if request.method == 'POST':
         return attendance_post(request, attendee, reservation)
+    
+    try:
+        type = request.GET["type"]
+    except:
+        type = None
+
+    if type == 'calendar':
+        return attendance_show_calendar(request, reservation)
+
     if attendee.response_status == attendee.ResponseStatus.WAITING:
         return render(request, 'attendee/confirm.html', {
         'attendee': attendee,
@@ -249,6 +299,15 @@ def attendance(request, id):
             'attendee': attendee,
             'reservation': reservation
         })
+
+def attendance_show_calendar(request, reservation):
+  
+    event_data = [{
+        'title': reservation.event_name,
+        'start': datetime.combine(reservation.start_date, reservation.start_time).isoformat(),
+        'end': datetime.combine(reservation.start_date, reservation.end_time()).isoformat(),
+    }]
+    return JsonResponse(event_data, safe=False)
 
 def attendance_post(request, attendee, reservation):
     if attendee.response_status != attendee.ResponseStatus.WAITING:

@@ -15,6 +15,19 @@
                     left: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay',
                 },
+                initialView: 'dayGridMonth',
+                eventSources: [
+                    {
+                        url: '{% url 'reservation_show' id=reservation.id %}',
+                        method: 'GET',
+                        extraParams: {
+                            type: 'calendar',
+                        },
+                        failure: function() {
+                            alert('there was an error while fetching events!');
+                        },
+                    }
+                ],
                 footerToolbar: {
                     center: 'prev,today,next',
                 },
@@ -55,7 +68,7 @@
                                         <td >Add to calendar:</td>
                                         <td>
                                             <a href="{% url 'reservation_feed' id=reservation.id %}" class="btn btn-primary btn-sm"><i class="bi bi-calendar me-1"></i>Ical File</a>
-                                            <a href="{% url 'reservation_google_calendar' id=reservation.id %}" class="btn btn-success btn-sm"><i class="bi bi-google me-1"></i> Google Calendar</a>
+                                            <a href="{% url 'google_calendar_link' id=reservation.id model='reservation' %}" class="btn btn-success btn-sm"><i class="bi bi-google me-1"></i> Google Calendar</a>
                                         </td>
                                     </tr>
                                     <tr>
