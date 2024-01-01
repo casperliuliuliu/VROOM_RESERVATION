@@ -8,6 +8,10 @@ from reservation.models import Reservation
 from django.core import mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.http import JsonResponse
+from django.utils.dateparse import parse_datetime
+from datetime import datetime
+
 
 # Create your views here.
 def index(request):
@@ -18,9 +22,47 @@ def index(request):
     
 def show(request, id):
     room = get_object_or_404(Room, id=id)
+    
+    try:
+        type = request.GET["type"]
+    except:
+        type = None
+
+    if type == 'calendar':
+        return show_calendar(request, room)
+
     return render(request, 'room/show.html', {
         'room': room
     })
+
+def show_calendar(request, room):
+    try:
+        start = request.GET["start"]
+        end = request.GET["end"]
+    except:
+        start = None
+        end = None
+
+    if not start and not end:
+        return JsonResponse({'error': 'start and end time are required'}, status=400)
+    
+    start_date = parse_datetime(start).date()
+    end_date = parse_datetime(end).date()
+
+    print(start_date, end_date)
+    
+    reservations = Reservation.objects.filter(room=room, start_date__gte=start_date, start_date__lte=end_date).all()
+
+    events_data = []
+
+    for reservation in reservations:
+        event_data = {
+            'title': reservation.event_name,
+            'start': datetime.combine(reservation.start_date, reservation.start_time).isoformat(),
+            'end': datetime.combine(reservation.start_date, reservation.end_time()).isoformat(),
+        }
+        events_data.append(event_data)
+    return JsonResponse(events_data, safe=False)
     
 @login_required
 def reserve(request, id):
