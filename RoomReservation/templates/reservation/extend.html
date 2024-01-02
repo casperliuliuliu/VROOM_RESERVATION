@@ -1,4 +1,4 @@
-{% extends 'template/base.html' %}
+{% extends "template/base.html" %}
 {% load humanize %}
 {% block style %}
     <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css"
@@ -71,7 +71,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td class="pe-3">Duration:</td>
-                                                        <td>{{ reservation.duration  }} Hour</td>
+                                                        <td>{{ reservation.duration }} Hour</td>
                                                     </tr>
                                                 </table>
                                             </div>
@@ -95,7 +95,7 @@
                                     </div>
                                 {% endfor %}
                                 {{ form.non_field_errors }}
-                                <form method="POST" >
+                                <form method="post" >
                                     {% csrf_token %}
                                     <div class="mb-3">
                                         <label for="{{ form.duration.id_for_label }}" class="form-label">Duration</label>
@@ -114,4 +114,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

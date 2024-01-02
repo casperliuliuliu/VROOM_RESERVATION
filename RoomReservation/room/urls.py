@@ -22,5 +22,7 @@ urlpatterns = [
     path("", views.index, name="room_index"),
     path("<int:id>", views.show, name="room_show"),
     path("<int:id>/reserve", views.reserve, name="room_reserve"),
+    path("add", views.add, name="room_add"),
+    path("<int:id>/edit", views.edit, name="room_edit"),
     
 ]

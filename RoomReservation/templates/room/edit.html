@@ -1,0 +1,24 @@
+{% extends "template/base.html" %}
+{% load humanize %}
+{% block script %}
+{% endblock script %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h1>Edit Room</h1>
+                        <p>Room Name: {{ room.name }}</p>
+                        <form action="{% url 'room_edit' id=room.id %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <a href="{% url 'room_index' %}" class="btn btn-secondary">Back</a>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

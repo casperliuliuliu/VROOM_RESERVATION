@@ -1,5 +1,26 @@
-{% extends 'template/base.html' %}
+{% extends "template/base.html" %}
 {% load humanize %}
+{% block style %}
+    <style>
+    .hero-container {
+        position: relative;
+        width: 100%;
+        height: 0; /* Initial height set to 0 */
+        padding-top: 50%; /* This creates a 1:2 aspect ratio (half the width) */
+        overflow: hidden; /* This ensures the image is cropped */
+    }
+    
+    .hero-image {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: auto;
+        transform: translate(-50%, -50%);
+    }
+    
+    </style>
+{% endblock style %}
 {% block script %}
     <script src=" https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.10/index.global.min.js"></script>
@@ -44,7 +65,16 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        {% if room.image %}<img src="{{ room.image.url }}" alt="Room Image">{% endif %}
+                        {% if room.image %}
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12 hero-container">
+                                        {% comment %} <img src="path_to_your_image.jpg" alt="Hero Image" class="hero-image"> {% endcomment %}
+                                        <img src="{{ room.image.url }}" class="hero-image" alt="Room Image">
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
                         <h1 class="card-title">{{ room.name }}</h1>
                         <div class="row">
                             <div class="col-12 col-md-8 mb-2">
@@ -58,14 +88,17 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="d-grid">
-                                            <a href="{% url 'room_reserve' id=room.id %}" class="btn btn-primary">Reserve Now</a>
+                                            {% if request.user.is_staff %}
+                                                    <a href="{% url 'room_edit' id=room.id %}" class="btn btn-success mb-2">Edit Room <i class="bi bi-pen"></i></a>
+                                            {% endif %}
+                                            <a href="{% url 'room_reserve' id=room.id %}" class="btn btn-primary">Reserve Now <i class="bi bi-journal"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <h5>Description</h5>
-                        <p>{{ room.description }}</p>
+                        <p>{{ room.description | linebreaks }}</p>
                         <div class="row">
                             <div class="col-12 col-md-7">
                                 <h5>Facilities</h5>
@@ -94,4 +127,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}
