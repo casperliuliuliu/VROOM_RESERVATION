@@ -1,9 +1,102 @@
 {% extends "template/base.html" %}
 {% load humanize %}
+{% block script %}
+    <script src=" https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.10/index.global.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('room-calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            themeSystem: 'bootstrap5',
+            timeZone: 'Asia/Taipei',
+            initialView: 'dayGridMonth',
+            eventSources: [
+                    {
+                        url: '{% url 'reservation_index' %}',
+                        method: 'GET',
+                        extraParams: {
+                            type: 'calendar',
+                        },
+                        failure: function() {
+                            alert('there was an error while fetching events!');
+                        },
+                    }
+                ],
+
+            headerToolbar: {
+                left: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay',
+            },
+            footerToolbar: {
+                center: 'prev,today,next',
+            },
+            dayMaxEvents: true, // allow "more" link when too many events
+          });
+        
+          calendar.render();
+    });
+
+    </script>
+{% endblock script %}
 {% block content %}
     <div class="card">
         <div class="card-body">
             <h1 class="mb-3">My Reservations</h1>
+            <div class="row mb-3">
+                <div class="col-12 col-md-7 mb-2">
+                    <div class="card">
+                        <div class="card-header">Today's Event</div>
+                        <div class="card-body">
+                            <div class="overflow-auto" style="height: 40vh;">
+                                {% for reservation in upcoming_reservations %}
+                                    <div class="col-12 mb-2">
+                                        <a href="{% url 'reservation_show' id=reservation.id %}"
+                                           class="text-decoration-none text-black">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4 class="card-title">{{ reservation.event_name }}</h4>
+                                                    <table>
+                                                        <tr>
+                                                            <td>Time:</td>
+                                                            <td>{{ reservation.start_time|time:"h:i A" }} - {{ reservation.end_time|time:"h:i A" }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Venue:</td>
+                                                            <td>
+                                                                <a href="{% url 'room_show' id=reservation.room.id %}">{{ reservation.room }}</a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Status:</td>
+                                                            <td>
+                                                                {% if reservation.status == self.ReservationStatus.ONGOING %}
+                                                                    <span class="badge bg-success">{{ reservation.status }}</span>
+                                                                {% elif reservation.status == self.ReservationStatus.ONGOING %}
+                                                                    <span class="badge bg-danger">{{ reservation.status }}</span>
+                                                                {% else %}
+                                                                    <span class="badge bg-secondary">{{ reservation.status }}</span>
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-5 mb-2">
+                    <div class="card">
+                        <div class="card-header">Calendar</div>
+                        <div class="card-body" style="min-height: 40vh;">
+                            <div id="room-calendar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 {% for reservation in reservations %}
                     <div class="col-12 mb-2">

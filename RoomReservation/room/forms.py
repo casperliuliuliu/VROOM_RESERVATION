@@ -23,7 +23,7 @@ class RoomForm(forms.ModelForm):
                                     widget=forms.Textarea(attrs={'class': 'form-control'}))
     capacity = forms.IntegerField(label='Capacity', required=True,
                                     widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    size = forms.IntegerField(label='Size', required=True,
+    size = forms.IntegerField(label='Size (m²)', required=True,
                                     widget=forms.NumberInput(attrs={'class': 'form-control'}))
     location = forms.CharField(label='Location', max_length=225, required=True,
                                     widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -37,3 +37,13 @@ class RoomForm(forms.ModelForm):
     class Meta:
         model = Room
         fields = ['name', 'description', 'capacity', 'size', 'location', 'price_per_hour', 'image', 'facilities']
+
+class MeetingRoomFacilityForm(forms.ModelForm):
+    name = forms.CharField(label='Name', max_length=225, required=True,
+                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
+    icon = forms.CharField(label='Bootstrap Icon (<i class="bi bi-...">)', max_length=225, required=False,
+                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
+    
+    class Meta:
+        model = MeetingRoomFacility
+        fields = ['name', 'icon']

@@ -5,7 +5,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.conf import settings
 from .models import Room
-from .forms import ReservationForm, RoomForm 
+from .forms import MeetingRoomFacilityForm, ReservationForm, RoomForm 
 from reservation.models import Reservation
 from django.core import mail
 from django.template.loader import render_to_string
@@ -184,3 +184,29 @@ def delete_post(request, id):
     room.delete()
     messages.success(request, 'Room deleted', extra_tags='success')
     return redirect('room_index')
+
+@staff_member_required
+def facility_add(request):
+    if request.method == 'POST':
+        return facility_add_post(request)
+        
+    return render(request, 'room/facility/add.html', {
+        'form': MeetingRoomFacilityForm()
+    })
+
+
+def facility_add_post(request):
+    form = MeetingRoomFacilityForm(request.POST)
+    if not form.is_valid():
+        return render(request, 'room/facility/add.html', {
+            'form': form
+        })
+    room = form.save(commit=False)
+    room.save()
+    messages.success(request, 'New facility added successfully', extra_tags='success')
+    try:
+        next = request.GET["next"]
+    except:
+        next = "room_index"
+        
+    return redirect(next)

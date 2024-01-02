@@ -53,12 +53,6 @@
                                aria-expanded="false">{{ request.user }}</a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <a class="dropdown-item" href="#">Profile</a>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li>
                                     <form method="post" action="{% url 'account_logout' %}">
                                         {% csrf_token %}
                                         <button class="dropdown-item" type="submit">Logout</button>

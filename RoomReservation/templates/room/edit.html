@@ -15,6 +15,9 @@
                               enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.as_p }}
+                            <p>
+                                <a href="{% url 'facility_add' %}?next={{ request.path }}" class="btn btn-info btn-sm">Add Meeting Room Facility</a>
+                            </p>
                             <a href="{% url 'room_index' %}" class="btn btn-secondary">Back</a>
                             <button type="button"
                                     data-bs-toggle="modal"

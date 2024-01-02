@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.core import mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.db.models import Q
+
 
 from django.conf import settings
 from datetime import datetime
@@ -137,10 +139,32 @@ def credentials_to_dict(credentials):
 # Create your views here.
 @login_required
 def index(request):
-    reservations = Reservation.objects.filter(user=request.user)
+    reservations = Reservation.objects.filter(user=request.user).order_by('-start_date', '-start_time').all()
+    try:
+        type = request.GET["type"]
+    except:
+        type = None
+
+    if type == 'calendar':
+        return index_calendar(request, reservations)
+    upcoming_reservations = Reservation.objects.filter(user=request.user, start_date=datetime.now().date()).order_by('start_date', 'start_time').all()
+    upcoming_reservations = map(lambda reservation: reservation if reservation.status() == Reservation.ReservationStatus.ONGOING or reservation.status() == Reservation.ReservationStatus.SCHEDULED else None, list(upcoming_reservations))
+    # print(list(upcoming_reservations))
     return render(request, 'reservation/index.html', {
-        'reservations': reservations
+        'upcoming_reservations': list(upcoming_reservations),
+        'reservations': reservations,
     })
+
+def index_calendar(request, reservations):
+    events_data = []
+    for reservation in reservations:
+        event_data = {
+            'title': reservation.event_name,
+            'start': datetime.combine(reservation.start_date, reservation.start_time).isoformat(),
+            'end': datetime.combine(reservation.start_date, reservation.end_time()).isoformat(),
+        }
+        events_data.append(event_data)
+    return JsonResponse(events_data, safe=False)
 
 @login_required
 def show(request, id):

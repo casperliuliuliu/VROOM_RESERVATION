@@ -79,8 +79,8 @@
                         <div class="row">
                             <div class="col-12 col-md-8 mb-2">
                                 <h5>Room Details</h5>
-                                <p class="card-text mb-0">Size: {{ room.size }}</p>
-                                <p class="card-text mb-0">Capacity: {{ room.capacity }}</p>
+                                <p class="card-text mb-0">Size: {{ room.size }}m²</p>
+                                <p class="card-text mb-0">Capacity: {{ room.capacity|intcomma }} people</p>
                                 <p class="card-text mb-0">Location: {{ room.location }}</p>
                                 <p class="card-text">Price: Nt${{ room.price_per_hour|intcomma }}/hour</p>
                             </div>

@@ -8,14 +8,11 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <h1>Add a Room</h1>
-                        <form action="{% url 'room_add' %}" method="post" enctype="multipart/form-data">
+                        <h1>Add a Meeting Room Facility</h1>
+                        <form action="{% url 'facility_add' %}" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.as_p }}
-                            <p>
-                                <a href="{% url 'facility_add' %}?next={{ request.path }}" class="btn btn-info btn-sm">Add Meeting Room Facility</a>
-                            </p>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">Add</button>
                         </form>
                     </div>
                 </div>
