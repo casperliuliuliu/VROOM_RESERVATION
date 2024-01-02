@@ -238,6 +238,15 @@ def attendee_show(request, reservation_id, attendee_id):
 @login_required
 def cancel_reservation(request, reservation_id):
     print('hello ==========')
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    print(reservation.canceled_at)
+    reservation.cancel()
+    print(reservation.canceled_at)
+    print(reservation.status())
+
+    return render(request, 'reservation/show.html', {
+        'reservation': reservation,
+    })
 
 @login_required
 def attendee_show_post(request, reservation, attendee):
