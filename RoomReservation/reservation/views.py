@@ -235,7 +235,9 @@ def attendee_show(request, reservation_id, attendee_id):
         'attendee': attendee
     })
 
-
+@login_required
+def cancel_reservation(request, reservation_id):
+    print('hello ==========')
 
 @login_required
 def attendee_show_post(request, reservation, attendee):
