@@ -157,9 +157,12 @@ def show(request, id):
     if(reservation.user != request.user):
         return HttpResponse('Unauthorized Access to this reservation', status=401)
     attendees = Attendee.objects.filter(reservation=reservation).all()
+    
+    show_extend_button = reservation.canceled_at == None
     return render(request, 'reservation/show.html', {
         'reservation': reservation,
-        'attendees': attendees
+        'attendees': attendees,
+        'show_extend_button' :show_extend_button,
     })
 
 def show_calendar(request, reservation):
@@ -237,18 +240,14 @@ def attendee_show(request, reservation_id, attendee_id):
 
 @login_required
 def cancel_reservation(request, reservation_id):
-    print('hello ==========')
     reservation = get_object_or_404(Reservation, id=reservation_id)
-    print("canceled_at:", reservation.canceled_at)
     reservation.cancel()
-    print("canceled_at:", reservation.canceled_at)
-    print("status:", reservation.status())
+    reservation.save()
 
     reservations = Reservation.objects.filter(user=request.user)
     reservation_page = render(request, 'reservation/index.html', {
         'reservations': reservations
     })
-    print("========")
 
     return reservation_page
 
