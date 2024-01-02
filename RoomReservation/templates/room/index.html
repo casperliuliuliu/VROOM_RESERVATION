@@ -8,10 +8,11 @@
                 <div class="card">
                     <div class="card-body">
                         <h1 class="card-title mb-3">Meeting Rooms</h1>
+                        {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
                         {% if request.user.is_staff %}
-                        <div class="container-flex mt-2 text-end">
-                            <a href="{% url 'room_add' %}" class="btn btn-primary">Add Room <i class="bi bi-plus"></i></a>
-                        </div>
+                            <div class="container-flex mt-2 text-end">
+                                <a href="{% url 'room_add' %}" class="btn btn-primary">Add Room <i class="bi bi-plus"></i></a>
+                            </div>
                         {% endif %}
                         <div class="row mt-5">
                             {% for room in rooms %}

@@ -24,5 +24,5 @@ urlpatterns = [
     path("<int:id>/reserve", views.reserve, name="room_reserve"),
     path("add", views.add, name="room_add"),
     path("<int:id>/edit", views.edit, name="room_edit"),
-    
+    path("<int:id>/room", views.delete_post, name="room_delete"),
 ]

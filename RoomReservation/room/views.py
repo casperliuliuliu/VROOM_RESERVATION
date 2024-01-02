@@ -171,3 +171,16 @@ def edit_post(request, room):
 
     messages.success(request, 'Room info updated', extra_tags='success')
     return redirect('room_show', id=room.id)
+
+@staff_member_required
+def delete_post(request, id):
+    room = get_object_or_404(Room, id=id)
+    try:
+        action = request.POST["action"]
+    except:
+        action = None
+    if action != 'delete':
+        return redirect('room_show', id=room.id)
+    room.delete()
+    messages.success(request, 'Room deleted', extra_tags='success')
+    return redirect('room_index')
