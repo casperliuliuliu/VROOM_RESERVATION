@@ -18,7 +18,7 @@
                 initialView: 'dayGridMonth',
                 eventSources: [
                     {
-                        url: '{% url 'reservation_show' id=reservation.id %}',
+                        url: "{% url 'reservation_show' id=reservation.id %}",
                         method: 'GET',
                         extraParams: {
                             type: 'calendar',
