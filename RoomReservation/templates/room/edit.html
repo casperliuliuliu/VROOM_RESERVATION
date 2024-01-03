@@ -1,0 +1,65 @@
+{% extends "template/base.html" %}
+{% load humanize %}
+{% block script %}
+{% endblock script %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h1>Edit Room</h1>
+                        <p>Room Name: {{ room.name }}</p>
+                        <form action="{% url 'room_edit' id=room.id %}"
+                              method="post"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <p>
+                                <a href="{% url 'facility_add' %}?next={{ request.path }}" class="btn btn-info btn-sm">Add Meeting Room Facility</a>
+                            </p>
+                            <a href="{% url 'room_index' %}" class="btn btn-secondary">Back</a>
+                            <button type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#delete-room-modal"
+                                    class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Room Modal -->
+    <div class="modal fade"
+         id="delete-room-modal"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Room {{ room.name }}</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'room_delete' id=room.id %}">
+                    <div class="modal-body">
+                        By clicking the button below, you will delete {{ room.name }}.
+                        <br>
+                        <b>This action cannot be undone!</b>
+                        <div class="form-check">
+                            {% csrf_token %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <input type="hidden" name="action" value="delete">
+                        <button type="submit" class="btn btn-danger">Delete Room</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

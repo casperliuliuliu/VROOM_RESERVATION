@@ -6,11 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.core import mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.db.models import Q
+
 
 from django.conf import settings
 from datetime import datetime
 
-from reservation.forms import AttendeeForm
+from reservation.forms import AttendeeForm, ExtensionsForm
 from .models import Reservation, Attendee
 import os
 
@@ -137,10 +139,32 @@ def credentials_to_dict(credentials):
 # Create your views here.
 @login_required
 def index(request):
-    reservations = Reservation.objects.filter(user=request.user)
+    reservations = Reservation.objects.filter(user=request.user).order_by('-start_date', '-start_time').all()
+    try:
+        type = request.GET["type"]
+    except:
+        type = None
+
+    if type == 'calendar':
+        return index_calendar(request, reservations)
+    upcoming_reservations = Reservation.objects.filter(user=request.user, start_date=datetime.now().date()).order_by('start_date', 'start_time').all()
+    upcoming_reservations = map(lambda reservation: reservation if reservation.status() == Reservation.ReservationStatus.ONGOING or reservation.status() == Reservation.ReservationStatus.SCHEDULED else None, list(upcoming_reservations))
+    # print(list(upcoming_reservations))
     return render(request, 'reservation/index.html', {
-        'reservations': reservations
+        'upcoming_reservations': list(upcoming_reservations),
+        'reservations': reservations,
     })
+
+def index_calendar(request, reservations):
+    events_data = []
+    for reservation in reservations:
+        event_data = {
+            'title': reservation.event_name,
+            'start': datetime.combine(reservation.start_date, reservation.start_time).isoformat(),
+            'end': datetime.combine(reservation.start_date, reservation.end_time()).isoformat(),
+        }
+        events_data.append(event_data)
+    return JsonResponse(events_data, safe=False)
 
 @login_required
 def show(request, id):
@@ -173,6 +197,63 @@ def show_calendar(request, reservation):
         'end': datetime.combine(reservation.start_date, reservation.end_time()).isoformat(),
     }]
     return JsonResponse(event_data, safe=False)
+
+@login_required
+def extend(request, id):
+    reservation = get_object_or_404(Reservation, id=id)
+    if request.method == 'POST':
+        return extend_post(request, reservation)
+    
+    room = reservation.room
+    if(reservation.user != request.user):
+        return HttpResponse('Unauthorized Access to this reservation', status=401)
+    
+    # if request.method == 'POST':
+    #     return extend_post(request, reservation)
+    
+    return render(request, 'reservation/extend.html', {
+        'reservation': reservation,
+        'room': room,
+        'form': ExtensionsForm()
+    })
+
+def extend_post(request, reservation):
+    room = reservation.room
+    form = ExtensionsForm(request.POST)
+    if not form.is_valid():
+        return render(request, 'reservation/extend.html', {
+            'reservation': reservation,
+            'room': room,
+            'form': form
+        })
+    
+    initial_endtime = reservation.end_time()
+    reservation.duration += form.cleaned_data['duration']
+
+    endtime = reservation.end_time()
+    other_reservation = Reservation.objects.raw("""
+        SELECT *, TIME(TIME(start_time, duration || ' hours'), '-1 seconds')
+        FROM reservation_reservation
+        WHERE 
+            room_id = %s AND 
+            start_date = %s AND 
+            (
+                start_time < %s AND
+                TIME(TIME(start_time, duration || ' hours'), '-1 seconds') >= %s
+            )
+        LIMIT 1""", 
+        [room.id, initial_endtime, endtime, reservation.start_time])
+    
+    if(len(other_reservation) > 0):
+        messages.error(request, 'This room is already reserved for this time', extra_tags='danger')
+        return render(request, 'reservation/extend.html', {
+            'reservation': reservation,
+            'room': room,
+            'form': form
+        })
+    reservation.save()
+    messages.success(request, 'Reservation extended successfully', extra_tags='success')
+    return redirect('reservation_show', reservation.id)
     
 @login_required
 def add_attendee(request, reservation_id):

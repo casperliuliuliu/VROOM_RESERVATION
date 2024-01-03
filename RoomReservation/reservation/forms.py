@@ -10,3 +10,9 @@ class AttendeeForm(forms.ModelForm):
     class Meta:
         model = Attendee
         fields = ['name', 'email']
+
+class ExtensionsForm(forms.Form):
+    duration = forms.IntegerField(label='Name', required=True, 
+                                 widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    
+    

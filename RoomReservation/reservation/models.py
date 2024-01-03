@@ -30,8 +30,6 @@ class Reservation(models.Model):
     def status(self):
         if self.canceled_at:
             return self.ReservationStatus.CANCELED
-        
-        print(datetime.now().date(), self.start_date, datetime.now().time(), self.end_time())
         if datetime.now().date() > self.start_date or (datetime.now().date() >= self.start_date and datetime.now().time() > self.end_time()):
             return self.ReservationStatus.COMPLETED
         if datetime.now().date() < self.start_date or (datetime.now().date() <= self.start_date and datetime.now().time() < self.start_time):

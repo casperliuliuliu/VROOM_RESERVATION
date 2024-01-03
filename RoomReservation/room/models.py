@@ -17,7 +17,7 @@ class Room(models.Model):
     size = models.FloatField()
     location = models.TextField()
     price_per_hour = models.IntegerField()
-    image = models.ImageField(upload_to='media/rooms/', null=True, blank=True)
+    image = models.ImageField(upload_to='rooms/', null=True, blank=True)
     facilities = models.ManyToManyField(MeetingRoomFacility, related_name='rooms')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rooms')
     created_at = models.DateTimeField(auto_now_add=True)

@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from reservation import views as reservation_views, feeds as reservation_feeds
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,4 +30,4 @@ urlpatterns = [
     path("<str:model>/<str:id>/gcal", reservation_views.google_calendar_auth, name="google_calendar_link"),
     path('calendar/redirect', reservation_views.google_calendar_callback, name="google_calendar_callback"),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

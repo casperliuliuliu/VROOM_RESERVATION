@@ -74,13 +74,14 @@
                                     <tr>
                                         <td >Actions:</td>
                                         <td>
+                                          
                                             {% if show_extend_button %}
                                             <a href="{% url 'reservation_extend' id=reservation.id %}" class="btn btn-info btn-sm">Extend Reservation</a>
-                                            <a class="btn btn-danger btn-sm">Cancel Reservation</a>
                                             {% endif %}
                                             
                                             <a href="{% url 'cancel_reservation' reservation_id=reservation.id %}"
                                             class="btn btn-danger btn-sm"></i>Cancel Reservation</a>
+                              
                                         </td>
                                     </tr>
                                 </table>
@@ -129,8 +130,8 @@
                                             <div class="card-body">
                                                 <h1 class="card-title">{{ reservation.room.name }}</h1>
                                                 <h5>Room Details</h5>
-                                                <p class="card-text mb-0">Size: {{ reservation.room.size }}</p>
-                                                <p class="card-text mb-0">Capacity: {{ reservation.room.capacity }}</p>
+                                                <p class="card-text mb-0">Size: {{ reservation.room.size }}m²</p>
+                                                <p class="card-text mb-0">Capacity: {{ reservation.room.capacity|intcomma }} people</p>
                                                 <p class="card-text mb-0">Location: {{ reservation.room.location }}</p>
                                                 <p class="card-text">Price: Nt${{ reservation.room.price_per_hour|intcomma }}/hour</p>
                                             </div>

@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+
 from django.contrib import messages
 from django.conf import settings
 from .models import Room
-from .forms import ReservationForm 
+from .forms import MeetingRoomFacilityForm, ReservationForm, RoomForm 
 from reservation.models import Reservation
 from django.core import mail
 from django.template.loader import render_to_string
@@ -119,3 +121,92 @@ def reserve_post(request, id):
 
     return redirect('reservation_show', id=reservation.id)
         
+@staff_member_required
+def add(request):
+    if request.method == 'POST':
+        return add_post(request)
+        
+    return render(request, 'room/add.html', {
+        'form': RoomForm()
+    })
+
+
+def add_post(request):
+    form = RoomForm(request.POST, request.FILES)
+    if not form.is_valid():
+        return render(request, 'room/add.html', {
+            'form': form
+        })
+    room = form.save(commit=False)
+    room.created_by = request.user
+    room.save()
+    form.save_m2m()
+    messages.success(request, 'New room added successfully', extra_tags='success')
+    return redirect('room_show', id=room.id)
+
+@staff_member_required
+def edit(request, id):
+    room = get_object_or_404(Room, id=id)
+    if request.method == 'POST':
+        return edit_post(request, room)
+        
+    return render(request, 'room/edit.html', {
+        'room': room,
+        'form': RoomForm(instance=room)
+    })
+
+def edit_post(request, room):
+    form = RoomForm(request.POST, request.FILES, instance=room)
+    if not form.is_valid():
+        return render(request, 'room/add.html', {
+            'form': form
+        })
+    old_image = room.image
+    room = form.save(commit=False)
+    if room.image:
+        room.image = old_image
+    
+    room.save()
+    form.save_m2m()
+
+    messages.success(request, 'Room info updated', extra_tags='success')
+    return redirect('room_show', id=room.id)
+
+@staff_member_required
+def delete_post(request, id):
+    room = get_object_or_404(Room, id=id)
+    try:
+        action = request.POST["action"]
+    except:
+        action = None
+    if action != 'delete':
+        return redirect('room_show', id=room.id)
+    room.delete()
+    messages.success(request, 'Room deleted', extra_tags='success')
+    return redirect('room_index')
+
+@staff_member_required
+def facility_add(request):
+    if request.method == 'POST':
+        return facility_add_post(request)
+        
+    return render(request, 'room/facility/add.html', {
+        'form': MeetingRoomFacilityForm()
+    })
+
+
+def facility_add_post(request):
+    form = MeetingRoomFacilityForm(request.POST)
+    if not form.is_valid():
+        return render(request, 'room/facility/add.html', {
+            'form': form
+        })
+    room = form.save(commit=False)
+    room.save()
+    messages.success(request, 'New facility added successfully', extra_tags='success')
+    try:
+        next = request.GET["next"]
+    except:
+        next = "room_index"
+        
+    return redirect(next)
