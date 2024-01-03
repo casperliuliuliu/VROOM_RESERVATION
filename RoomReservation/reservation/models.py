@@ -18,6 +18,9 @@ class Reservation(models.Model):
     def end_time(self):
         return time(hour=self.start_time.hour + self.duration - 1 , minute=59, second=59 )
     
+    def cancel(self):
+        self.canceled_at = datetime.now()
+
     class ReservationStatus(models.TextChoices):
         COMPLETED = 'Completed'
         CANCELED = 'Canceled'
