@@ -75,7 +75,8 @@
                                         <td >Actions:</td>
                                         <td>
                                             {% if show_extend_button %}
-                                            <button class="btn btn-info btn-sm">Extend Reservation</button>
+                                            <a href="{% url 'reservation_extend' id=reservation.id %}" class="btn btn-info btn-sm">Extend Reservation</a>
+                                            <a class="btn btn-danger btn-sm">Cancel Reservation</a>
                                             {% endif %}
                                             
                                             <a href="{% url 'cancel_reservation' reservation_id=reservation.id %}"
