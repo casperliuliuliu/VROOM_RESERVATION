@@ -60,6 +60,11 @@
                             <div class="col-12 col-md-8">
                                 <h5 class="mb-0">Event</h5>
                                 <h1 class="card-title mb-0">{{ reservation.event_name }}</h1>
+                                {% if reservation.canceled_at != None %}
+                                <div class="alert alert-danger">
+                                    This event is canceled.
+                                </div>
+                                {% endif %}
                                 {% for message in messages %}
                                     <div class="alert alert-{{ message.tags }}">
                                         {{ message }}
@@ -94,6 +99,7 @@
                                         <td class="">Duration:</td>
                                         <td>{{ reservation.duration }} Hour</td>
                                     </tr>
+                                    {% if reservation.canceled_at == None %}
                                     <tr>
                                         <td >Add to calendar:</td>
                                         <td>
@@ -101,6 +107,7 @@
                                             <a href="{% url 'google_calendar_link' id=attendee.id model='attendee' %}" class="btn btn-success btn-sm"><i class="bi bi-google me-1"></i> Google Calendar</a>
                                         </td>
                                     </tr>
+                                    {% endif %}
                                 </table>
                             </div>
                         </div>

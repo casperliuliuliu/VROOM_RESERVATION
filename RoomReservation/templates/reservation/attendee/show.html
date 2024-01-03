@@ -74,6 +74,7 @@
                                         <td>Added at:</td>
                                         <td>{{ attendee.created_at }}</td>
                                     </tr>
+                                    {% if reservation.canceled_at == None %}
                                     <tr>
                                         <td>Actions:</td>
                                         <td>
@@ -87,6 +88,7 @@
                                                     class="btn btn-danger btn-sm">Cancel Invitation</button>
                                         </td>
                                     </tr>
+                                    {% endif %}
                                 </table>
                                 <a href="{% url 'reservation_show' id=reservation.id %}"
                                    class="btn btn-secondary">Back</a>

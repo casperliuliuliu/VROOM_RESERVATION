@@ -51,13 +51,15 @@
                             </div>
                             <div class="col-12 col-md-8">
                                 <h1>Confirm Invitation</h1>
+                                {% if reservation.canceled_at != None %}<div class="alert alert-danger">This event is canceled.</div>{% endif %}
                                 {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
+                                {% if reservation.canceled_at == None %}
                                 <div class="mb-3 row">
                                     <div class="col-3 d-grid">
                                         <button type="button"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#accept-invitation-modal"
-                                        class="btn btn-success">Accept</button>
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#accept-invitation-modal"
+                                                class="btn btn-success">Accept</button>
                                     </div>
                                     <div class="col-3 d-grid">
                                         <button type="button"
@@ -66,6 +68,7 @@
                                                 class="btn btn-danger">Decline</button>
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -103,7 +106,6 @@
             </div>
         </div>
     </div>
-    
     <!-- Decline Invitation Modal -->
     <div class="modal fade"
          id="decline-invitation-modal"

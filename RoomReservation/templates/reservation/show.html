@@ -53,6 +53,12 @@
                                 <h4>Reservation Details</h4>
                                 <table class="mb-3 table">
                                     <tr>
+                                        <td class="col-3">Status:</td>
+                                        <td class="col">
+                                            <span class="{{ reservation.status_badge }}">{{ reservation.status }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td class="col-3">Start Time:</td>
                                         <td class="col">{{ reservation.start_time | time:'H:i A' }}</td>
                                     </tr>
@@ -64,6 +70,7 @@
                                         <td >Duration:</td>
                                         <td>{{ reservation.duration }} hours</td>
                                     </tr>
+                                    {% if show_extend_button %}
                                     <tr>
                                         <td >Add to calendar:</td>
                                         <td>
@@ -74,24 +81,21 @@
                                     <tr>
                                         <td >Actions:</td>
                                         <td>
-                                          
-                                            {% if show_extend_button %}
                                             <a href="{% url 'reservation_extend' id=reservation.id %}" class="btn btn-info btn-sm">Extend Reservation</a>
                                             <a href="{% url 'cancel_reservation' reservation_id=reservation.id %}"
                                             class="btn btn-danger btn-sm"></i>Cancel Reservation</a>
-                                            {% endif %}
-                                            
-                                            
-                              
                                         </td>
                                     </tr>
+                                    {% endif %}
                                 </table>
                                 <h4>Attendees</h4>
                                 <div class="container-flex text-end">
+                                    {% if show_extend_button %}
                                     <a href="{% url 'reservation_attendee_add' reservation_id=reservation.id %}"
                                        class=" btn btn-primary btn-sm">
                                         Add Attendee <i class="bi bi-plus"></i>
                                     </a>
+                                    {% endif %}
                                 </div>
                                 <div class="row">
                                     <div class="col-12">

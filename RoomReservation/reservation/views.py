@@ -161,7 +161,7 @@ def index(request):
 
 def index_calendar(request, reservations):
     events_data = []
-    for reservation in reservations:
+    for reservation in Reservation.objects.filter(user=request.user, canceled_at = None).all():
         event_data = {
             'title': reservation.event_name,
             'start': datetime.combine(reservation.start_date, reservation.start_time).isoformat(),
@@ -173,7 +173,6 @@ def index_calendar(request, reservations):
 @login_required
 def show(request, id):
     reservation = get_object_or_404(Reservation, id=id)
-    
     try:
         type = request.GET["type"]
     except:
@@ -194,7 +193,6 @@ def show(request, id):
     })
 
 def show_calendar(request, reservation):
-  
     event_data = [{
         'title': reservation.event_name,
         'start': datetime.combine(reservation.start_date, reservation.start_time).isoformat(),
@@ -205,6 +203,8 @@ def show_calendar(request, reservation):
 @login_required
 def extend(request, id):
     reservation = get_object_or_404(Reservation, id=id)
+    if reservation.canceled_at != None:
+        return HttpResponse('This reservation has been canceled', status=401)
     if request.method == 'POST':
         return extend_post(request, reservation)
     
@@ -262,6 +262,9 @@ def extend_post(request, reservation):
 @login_required
 def add_attendee(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
+    if reservation.canceled_at != None:
+        return HttpResponse('This reservation has been canceled', status=401)
+    
     if(reservation.user != request.user):
         return HttpResponse('Unauthorized Access to this reservation', status=401)
     
@@ -318,6 +321,8 @@ def attendee_show(request, reservation_id, attendee_id):
 @login_required
 def cancel_reservation(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
+    if reservation.canceled_at != None:
+        return HttpResponse('This reservation has been canceled', status=401)
     reservation.cancel()
     reservation.save()
     for attendee in Attendee.objects.filter(reservation=reservation).all():
@@ -328,6 +333,9 @@ def cancel_reservation(request, reservation_id):
 
 @login_required
 def attendee_show_post(request, reservation, attendee):
+    if reservation.canceled_at != None:
+        return HttpResponse('This event has been canceled', status=401)
+    
     if request.POST["action"] == 'resend_invitation':
         send_invitation(request, attendee, reservation)
         messages.success(request, 'Invitation has been resent successfully', extra_tags='success')

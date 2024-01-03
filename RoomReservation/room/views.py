@@ -51,7 +51,7 @@ def show_calendar(request, room):
     start_date = parse_datetime(start).date()
     end_date = parse_datetime(end).date()
     
-    reservations = Reservation.objects.filter(room=room, start_date__gte=start_date, start_date__lte=end_date).all()
+    reservations = Reservation.objects.filter(room=room, start_date__gte=start_date, start_date__lte=end_date, canceled_at = None).all()
 
     events_data = []
 
@@ -96,7 +96,8 @@ def reserve_post(request, id):
             (
                 start_time < %s AND
                 TIME(TIME(start_time, duration || ' hours'), '-1 seconds') >= %s
-            )
+            ) AND
+            canceled_at IS NULL
         LIMIT 1""", 
         [room.id, reservation.start_date, endtime, reservation.start_time])
     
