@@ -147,11 +147,15 @@ def index(request):
 
     if type == 'calendar':
         return index_calendar(request, reservations)
-    upcoming_reservations = Reservation.objects.filter(user=request.user, start_date=datetime.now().date()).order_by('start_date', 'start_time').all()
+    upcoming_reservations = Reservation.objects.filter(user=request.user, start_date=datetime.now().date(), canceled_at = None).order_by('start_date', 'start_time').all()
     upcoming_reservations = map(lambda reservation: reservation if reservation.status() == Reservation.ReservationStatus.ONGOING or reservation.status() == Reservation.ReservationStatus.SCHEDULED else None, list(upcoming_reservations))
+    upcoming_reservations_cleaned = []
+    for upcoming_reservation in upcoming_reservations:
+        if upcoming_reservation != None:
+            upcoming_reservations_cleaned.append(upcoming_reservation)
     # print(list(upcoming_reservations))
     return render(request, 'reservation/index.html', {
-        'upcoming_reservations': list(upcoming_reservations),
+        'upcoming_reservations': list(upcoming_reservations_cleaned),
         'reservations': reservations,
     })
 
@@ -288,17 +292,9 @@ def add_attendee_post(request, reservation):
     )
     attendee.reservation = reservation
     attendee.save()
-    messages.success(request, 'Attendee added successfully', extra_tags='success')
     
-    redirect_link = f'{settings.DEFAULT_HOST}/attendee/{attendee.id}'
-    subject = f'Invitation to [{reservation.event_name}]'
-    html_message = render_to_string('emails/attendee.html', {'reservation': reservation, 'attendee': attendee, 'redirect_link': redirect_link})
-    plain_message = strip_tags(html_message)
-    from_email = 'Best Reservation Website <sandboxatrest@gmail.com>'
-    to = attendee.email 
-
-    mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
-
+    send_invitation(request, attendee, reservation)
+    messages.success(request, 'Attendee added successfully', extra_tags='success')
     return redirect('reservation_show', reservation.id)
 
 @login_required
@@ -324,40 +320,24 @@ def cancel_reservation(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
     reservation.cancel()
     reservation.save()
+    for attendee in Attendee.objects.filter(reservation=reservation).all():
+        send_cancellation(request, attendee, reservation)
 
-    reservations = Reservation.objects.filter(user=request.user)
-    reservation_page = render(request, 'reservation/index.html', {
-        'reservations': reservations
-    })
-
-    return reservation_page
+    messages.success(request, 'Reservation canceled successfully', extra_tags='success')
+    return redirect('reservation_show', reservation.id)
 
 @login_required
 def attendee_show_post(request, reservation, attendee):
     if request.POST["action"] == 'resend_invitation':
-        redirect_link = f'{settings.DEFAULT_HOST}/attendee/{attendee.id}'
-        subject = f'Invitation to [{reservation.event_name}]'
-        html_message = render_to_string('emails/attendee.html', {'reservation': reservation, 'attendee': attendee, 'redirect_link': redirect_link})
-        plain_message = strip_tags(html_message)
-        from_email = 'Best Reservation Website <sandboxatrest@gmail.com>'
-        to = attendee.email 
-        mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+        send_invitation(request, attendee, reservation)
         messages.success(request, 'Invitation has been resent successfully', extra_tags='success')
         return redirect('reservation_attendee_show', reservation_id = reservation.id, attendee_id = attendee.id)
+    
     elif request.POST["action"] == 'cancel_invitation':
         if request.POST["send_canceled_email"] == "true":
-            subject = f'Cancellation of [{reservation.event_name}]'
-            html_message = render_to_string('emails/canceled.html', {'reservation': reservation, 'attendee': attendee})
-            plain_message = strip_tags(html_message)
-            from_email = 'Best Reservation Website <sandboxatrest@gmail.com>'
-            to = attendee.email 
+            send_cancellation(request, attendee, reservation)
         else:
-            subject = f'Change in Meeting Attendance for [{reservation.event_name}]'
-            html_message = render_to_string('emails/attendee_removed.html', {'reservation': reservation, 'attendee': attendee})
-            plain_message = strip_tags(html_message)
-            from_email = 'Best Reservation Website <sandboxatrest@gmail.com>'
-            to = attendee.email 
-        mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+            send_invite_cancellation(request, attendee, reservation)
         messages.success(request, f'Invitation to {attendee.name} canceled successfully', extra_tags='success')
         attendee.delete()
 
@@ -396,7 +376,6 @@ def attendance(request, id):
         })
 
 def attendance_show_calendar(request, reservation):
-  
     event_data = [{
         'title': reservation.event_name,
         'start': datetime.combine(reservation.start_date, reservation.start_time).isoformat(),
@@ -420,3 +399,28 @@ def attendance_post(request, attendee, reservation):
         return redirect('attendance', id = attendee.id)
     else:
         return HttpResponse('Invalid action', status=400)
+    
+def send_invitation(request, attendee, reservation):
+    redirect_link = f'{settings.DEFAULT_HOST}/attendee/{attendee.id}'
+    subject = f'Invitation to [{reservation.event_name}]'
+    html_message = render_to_string('emails/attendee.html', {'reservation': reservation, 'attendee': attendee, 'redirect_link': redirect_link})
+    plain_message = strip_tags(html_message)
+    from_email = 'Best Reservation Website <sandboxatrest@gmail.com>'
+    to = attendee.email 
+    mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+
+def send_cancellation(request, attendee, reservation):
+    subject = f'Cancellation of [{reservation.event_name}]'
+    html_message = render_to_string('emails/canceled.html', {'reservation': reservation, 'attendee': attendee})
+    plain_message = strip_tags(html_message)
+    from_email = 'Best Reservation Website <sandboxatrest@gmail.com>'
+    to = attendee.email 
+    mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+
+def send_invite_cancellation(request, attendee, reservation):
+    subject = f'Change in Meeting Attendance for [{reservation.event_name}]'
+    html_message = render_to_string('emails/attendee_removed.html', {'reservation': reservation, 'attendee': attendee})
+    plain_message = strip_tags(html_message)
+    from_email = 'Best Reservation Website <sandboxatrest@gmail.com>'
+    to = attendee.email 
+    mail.send_mail(subject, plain_message, from_email, [to], html_message=html_message)
