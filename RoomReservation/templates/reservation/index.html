@@ -69,13 +69,7 @@
                                                         <tr>
                                                             <td>Status:</td>
                                                             <td>
-                                                                {% if reservation.status == self.ReservationStatus.ONGOING %}
-                                                                    <span class="badge bg-success">{{ reservation.status }}</span>
-                                                                {% elif reservation.status == self.ReservationStatus.ONGOING %}
-                                                                    <span class="badge bg-danger">{{ reservation.status }}</span>
-                                                                {% else %}
-                                                                    <span class="badge bg-secondary">{{ reservation.status }}</span>
-                                                                {% endif %}
+                                                                <span class="{{ reservation.status_badge }}">{{ reservation.status }}</span>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -123,13 +117,7 @@
                                         <tr>
                                             <td>Status:</td>
                                             <td>
-                                                {% if reservation.status == self.ReservationStatus.ONGOING %}
-                                                    <span class="badge bg-success">{{ reservation.status }}</span>
-                                                {% elif reservation.status == self.ReservationStatus.ONGOING %}
-                                                    <span class="badge bg-danger">{{ reservation.status }}</span>
-                                                {% else %}
-                                                    <span class="badge bg-secondary">{{ reservation.status }}</span>
-                                                {% endif %}
+                                                <span class="{{ reservation.status_badge }}">{{ reservation.status }}</span>
                                             </td>
                                         </tr>
                                     </table>

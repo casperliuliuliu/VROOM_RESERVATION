@@ -27,6 +27,15 @@ class Reservation(models.Model):
         ONGOING = 'On Going'
         SCHEDULED = 'Scheduled'
 
+    def status_badge(self):
+        badge_class = {
+            'Completed': 'badge bg-success',
+            'Canceled': 'badge bg-danger',
+            'On Going': 'badge bg-primary',
+            'Scheduled': 'badge bg-info',
+        }
+        return badge_class[self.status()]
+
     def status(self):
         if self.canceled_at:
             return self.ReservationStatus.CANCELED
