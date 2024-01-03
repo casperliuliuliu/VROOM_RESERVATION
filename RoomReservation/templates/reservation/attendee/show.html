@@ -74,7 +74,7 @@
                                         <td>Added at:</td>
                                         <td>{{ attendee.created_at }}</td>
                                     </tr>
-                                    {% if reservation.canceled_at == None %}
+                                    {% if reservation.canceled_at == None and reservation.status != "Completed" %}
                                     <tr>
                                         <td>Actions:</td>
                                         <td>

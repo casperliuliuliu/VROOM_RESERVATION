@@ -70,7 +70,7 @@
                                         <td >Duration:</td>
                                         <td>{{ reservation.duration }} hours</td>
                                     </tr>
-                                    {% if show_extend_button %}
+                                    {% if show_extend_button and reservation.status != "Completed" %}
                                     <tr>
                                         <td >Add to calendar:</td>
                                         <td>
@@ -90,7 +90,7 @@
                                 </table>
                                 <h4>Attendees</h4>
                                 <div class="container-flex text-end">
-                                    {% if show_extend_button %}
+                                    {% if show_extend_button and reservation.status != "Completed" %}
                                     <a href="{% url 'reservation_attendee_add' reservation_id=reservation.id %}"
                                        class=" btn btn-primary btn-sm">
                                         Add Attendee <i class="bi bi-plus"></i>
