@@ -41,3 +41,9 @@ Office Hours: [10:00-16:00 on Mon to Fri.]
 # 5.    More Project Resources
 ### **SLIDES: [[Google_Slides](https://docs.google.com/presentation/d/195dTo58wWwfI2_dF8uT_VGHx11yzJ-pkRS2490557VM/edit#slide=id.g26517340b46_0_27)]**
 ### **PROJECT VIDEO: [on slide 24 in [Google_Slides](https://docs.google.com/presentation/d/195dTo58wWwfI2_dF8uT_VGHx11yzJ-pkRS2490557VM/edit#slide=id.g26517340b46_0_27)]**
+### Demo
+https://room.atrest.xyz \
+(Deployed to 24/7 running Linux Server on OCI)\
+**Superuser account**\
+**Account:** root\
+**Password:** administrator\
