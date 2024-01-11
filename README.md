@@ -46,4 +46,4 @@ https://room.atrest.xyz \
 (Deployed to 24/7 running Linux Server on OCI)\
 **Superuser account**\
 **Account:** root\
-**Password:** administrator
+**Password:** password
